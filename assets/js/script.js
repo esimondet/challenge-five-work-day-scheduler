@@ -5,15 +5,15 @@ var loadPage = function () {
 
     for (let i = 0; i < timeArray.length; i++) {
 
-        var scheduleDiv = $("<div></div>");
+        var scheduleDiv = $("<div>");
         scheduleDiv.addClass("row");
 
-        var timeDiv = $("<div></div>");
+        var timeDiv = $("<div>");
         timeDiv.addClass("hour");
         timeDiv.html(timeArray[i]);
 
-        var textDiv = $("<div></div>");
-        textDiv.addClass("textarea time-block description");
+        var textDiv = $("<div>");
+        textDiv.addClass("time-block");
 
         if ((i+9) < moment().format("HH")) {
             textDiv.addClass("past");
@@ -23,23 +23,36 @@ var loadPage = function () {
             textDiv.addClass("present");
         }
 
-        var saveButton = $("<button></button>");
+        var textInput = $("<textarea>");
+        textInput.addClass("textarea description");
+
+        var saveButton = $("<button>");
         saveButton.addClass("saveBtn")
 
-        var saveIcon = $("<i></i>")
+        var saveIcon = $("<i>")
         saveIcon.addClass("fas fa-save")
 
         scheduleDiv.append(timeDiv);
         scheduleDiv.append(textDiv);
+        textDiv.append(textInput);
         scheduleDiv.append(saveButton);
         saveButton.append(saveIcon);
         $("#schedule").append(scheduleDiv);
+
+        // saveButton.addEventListener("click", function () {addSchedule(timeArray[i])});
     };
 }
 
+var storeSchedule = {
+    "schedule": []
+}
 
+var addSchedule = function () {
+    
+}
 
 loadPage();
+
 
 /*
 To Do:
