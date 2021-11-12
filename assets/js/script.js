@@ -9,6 +9,8 @@ var storeSchedule = emptySchedule;
 //bugggss?
 //possibly only saving first item to local storage
 //not loading items from local storage
+//on bug fix day, add alerts. Most likely and issue of deleting the items right away. 
+// concern on the findIndex or any filters for sure, could be something else too regarding defined values
 
 var loadPage = function () {
     $("#currentDay").html(moment().format("dddd" + ", " + "MMMM Do"));
@@ -42,9 +44,10 @@ var loadPage = function () {
         var textInput = $("<textarea>");
         textInput.addClass("textarea description");
         // checking in schedule array to find if entry with hour already exists 
-        if (storeSchedule["schedule"].filter(i => i.hour === timeArray[i]).length > 0) {
-            textInput.text(storeSchedule["schedule"].filter(i => i.hour === timeArray[i])[0].meetingText);
-        }
+        if (storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]) != -1) {
+            var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]);
+            textInput.text(storeSchedule["schedule"][index].meetingText);
+        };
 
         var saveButton = $("<button>");
         saveButton.addClass("saveBtn");
@@ -65,9 +68,9 @@ var loadPage = function () {
         var hour = $(this).parent().attr("id");
         var meetingText = $(this).parent().find("textarea").val();
 
-        if (storeSchedule["schedule"].filter(i => i.hour === hour).length > 0) {
+        if (storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === hour) != -1) {
             // check each element to find index of hour
-            var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour === hour);
+            var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === hour);
             // remove stored data...
             storeSchedule["schedule"].remove(index)
         }
