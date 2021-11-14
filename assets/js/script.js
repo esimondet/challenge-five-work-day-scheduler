@@ -6,21 +6,15 @@ var emptySchedule = {
 
 var storeSchedule = emptySchedule;
 
-//bugggss?
-//possibly only saving first item to local storage
-//not loading items from local storage
-//on bug fix day, add alerts. Most likely and issue of deleting the items right away. 
-// concern on the findIndex or any filters for sure, could be something else too regarding defined values
-
 var loadPage = function () {
     $("#currentDay").html(moment().format("dddd" + ", " + "MMMM Do"));
 
     var localSchedule = localStorage.getItem("schedule");
     if (localSchedule != null) {
-        console.log("Saved schedule found!");
         storeSchedule = JSON.parse(localSchedule);
     }
 
+    //Build HTML from JS
     for (let i = 0; i < timeArray.length; i++) {
 
         var scheduleDiv = $("<div>");
@@ -28,6 +22,8 @@ var loadPage = function () {
         scheduleDiv.attr("id", timeArray[i]);
 
         var timeDiv = $("<div>");
+
+        //color code time before, after, and present hour
         timeDiv.addClass("hour");
         timeDiv.html(timeArray[i]);
 
@@ -45,7 +41,6 @@ var loadPage = function () {
         var textInput = $("<textarea>");
         textInput.addClass("textarea description");
         textInput.attr("id", timeArray[i] + "TextArea");
-        // checking in schedule array to find if entry with hour already exists 
 
         var saveButton = $("<button>");
         saveButton.addClass("saveBtn");
@@ -61,29 +56,27 @@ var loadPage = function () {
         saveButton.append(saveIcon);
         $("#schedule").append(scheduleDiv);
 
+        // checking in schedule array to find if entry with hour already exists 
         if (storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]) != -1) {
-            console.log("There is an entry for this time already!");
             var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]);
-            $('#' + timeArray[i]+'TextArea').val(storeSchedule["schedule"][index].meeting);
+            $('#' + timeArray[i] + 'TextArea').val(storeSchedule["schedule"][index].meeting);
         };
 
     };
 
     $(document).on('click', '#save', function () {
-        console.log("Button clicked at ");
         var hour = $(this).parent().attr("id");
         var meetingText = $(this).parent().find("textarea").val();
 
         if (storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === hour) != -1) {
             // check each element to find index of hour
             var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === hour);
-            // remove stored data...
-            console.log("removing stored data...");
-            storeSchedule["schedule"].remove(index)
+            // replace stored data...
+            storeSchedule["schedule"][index].meeting = meetingText;
+        } else {
+            //...if existing entry then set new text value
+            storeSchedule["schedule"].push({ "hour": hour, "meeting": meetingText });
         }
-        //...then replace with new data
-        console.log("replacing stored data...");
-        storeSchedule["schedule"].push({ "hour": hour, "meeting": meetingText });
         localStorage.setItem("schedule", JSON.stringify(storeSchedule));
     });
 }
