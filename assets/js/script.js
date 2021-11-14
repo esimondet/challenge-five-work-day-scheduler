@@ -17,6 +17,7 @@ var loadPage = function () {
 
     var localSchedule = localStorage.getItem("schedule");
     if (localSchedule != null) {
+        console.log("Saved schedule found!");
         storeSchedule = JSON.parse(localSchedule);
     }
 
@@ -43,11 +44,8 @@ var loadPage = function () {
 
         var textInput = $("<textarea>");
         textInput.addClass("textarea description");
+        textInput.attr("id", timeArray[i] + "TextArea");
         // checking in schedule array to find if entry with hour already exists 
-        if (storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]) != -1) {
-            var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]);
-            textInput.text(storeSchedule["schedule"][index].meetingText);
-        };
 
         var saveButton = $("<button>");
         saveButton.addClass("saveBtn");
@@ -62,9 +60,17 @@ var loadPage = function () {
         scheduleDiv.append(saveButton);
         saveButton.append(saveIcon);
         $("#schedule").append(scheduleDiv);
+
+        if (storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]) != -1) {
+            console.log("There is an entry for this time already!");
+            var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === timeArray[i]);
+            $('#' + timeArray[i]+'TextArea').val(storeSchedule["schedule"][index].meeting);
+        };
+
     };
 
-    $("#save").on("click", function () {
+    $(document).on('click', '#save', function () {
+        console.log("Button clicked at ");
         var hour = $(this).parent().attr("id");
         var meetingText = $(this).parent().find("textarea").val();
 
@@ -72,9 +78,11 @@ var loadPage = function () {
             // check each element to find index of hour
             var index = storeSchedule["schedule"].findIndex(selectedHour => selectedHour.hour === hour);
             // remove stored data...
+            console.log("removing stored data...");
             storeSchedule["schedule"].remove(index)
         }
         //...then replace with new data
+        console.log("replacing stored data...");
         storeSchedule["schedule"].push({ "hour": hour, "meeting": meetingText });
         localStorage.setItem("schedule", JSON.stringify(storeSchedule));
     });
